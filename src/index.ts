@@ -2,6 +2,7 @@ import { ApolloServer } from "apollo-server";
 import { typeDefs } from "./schema";
 import { Query, Mutation } from "./resolvers";
 import { PrismaClient, Prisma } from "@prisma/client";
+import { getUserFromToken } from "./utils/getUserFromRoken";
 
 const PORT = 4001;
 
@@ -11,6 +12,9 @@ export interface Context {
     never,
     Prisma.RejectOnNotFound | Prisma.RejectPerOperation
   >;
+  userInfo: {
+    userId: string;
+  } | null;
 }
 
 const server = new ApolloServer({
@@ -19,7 +23,10 @@ const server = new ApolloServer({
     Query,
     Mutation,
   },
-  context: { db: new PrismaClient() },
+  context: ({ req }) => ({
+    db: new PrismaClient(),
+    userInfo: getUserFromToken(req.headers.authorization),
+  }),
 });
 
 server.listen(PORT).then(() => {
