@@ -17,6 +17,8 @@ export interface Context {
   } | null;
 }
 
+export const db = new PrismaClient();
+
 const server = new ApolloServer({
   typeDefs,
   resolvers: {
@@ -27,7 +29,7 @@ const server = new ApolloServer({
     Mutation,
   },
   context: ({ req }) => ({
-    db: new PrismaClient(),
+    db,
     userInfo: getUserFromToken(req.headers.authorization),
   }),
 });

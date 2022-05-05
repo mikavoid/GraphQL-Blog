@@ -1,3 +1,4 @@
+import { userLoader } from "./../loaders/userLoader";
 import { Context } from "./../index";
 
 interface PostParent {
@@ -9,6 +10,6 @@ interface PostParent {
 }
 export const Post = {
   author: ({ authorId }: PostParent, _args: any, { db }: Context) => {
-    return db.user.findUnique({ where: { id: authorId } });
+    return userLoader.load(authorId);
   },
 };
